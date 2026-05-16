@@ -1563,7 +1563,7 @@
 // =====================================================
 // CONFIG — change this if your server runs elsewhere
 // =====================================================
-const API_BASE = 'http://localhost:5500/api';
+const API_BASE = 'https://student-management-system-o308.onrender.com';
 
 // =====================================================
 // GLOBAL ERROR BOUNDARY
