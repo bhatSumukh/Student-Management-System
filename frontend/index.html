@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Chart.js (single import, no duplicate) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- EmailJS for OTP -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // Init EmailJS — runs once before any interaction
+    (function(){
+      try { emailjs.init("rARCanLsFJoIfaul3"); } catch(e){}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ===================================================
+     LOGIN PAGE
+=================================================== -->
+<div id="login-page">
+  <!-- Animated background blobs -->
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <!-- Floating edu icons -->
+  <div class="edu-icons">
+    <div class="edu-icon">📚</div>
+    <div class="edu-icon">🎓</div>
+    <div class="edu-icon">✏️</div>
+    <div class="edu-icon">🔬</div>
+    <div class="edu-icon">💡</div>
+    <div class="edu-icon">📐</div>
+  </div>
+
+  <div class="login-container">
+    <!-- Brand header -->
+    <div class="login-brand">
+      <div class="login-logo">🎓</div>
+      <h1>EduManage Pro</h1>
+      <p>Student Management System &mdash; Final Year BCA Project</p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="login-card" id="login-form-section">
+      <div class="login-tabs" id="role-tabs">
+        <button class="login-tab active" onclick="setRole('admin')">Admin</button>
+        <button class="login-tab" onclick="setRole('teacher')">Teacher</button>
+        <button class="login-tab" onclick="setRole('student')">Student</button>
+        <button class="login-tab" onclick="setRole('staff')">Staff</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Username / USN</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input class="form-input" id="login-user" type="text" placeholder="Enter your username" autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input class="form-input" id="login-pass" type="password" placeholder="Enter your password" autocomplete="current-password">
+          <button class="toggle-pass" type="button" onclick="togglePass()" id="pass-toggle">👁️</button>
+        </div>
+      </div>
+
+      <button class="btn-login" id="login-btn" onclick="doLogin()">
+        <span id="login-btn-text">Sign In →</span>
+      </button>
+
+      <div class="forgot-link">
+        <a onclick="showForgot()">Forgot Password?</a>
+      </div>
+
+      <!-- Demo credentials quick-fill -->
+      <div class="demo-creds">
+        <strong>🎯 Demo Credentials (click to fill)</strong>
+        <div class="demo-row"><span>Admin:</span><span class="demo-badge badge-admin" onclick="fillCreds('admin','password123','admin')">admin / password123</span></div>
+        <div class="demo-row"><span>Teacher:</span><span class="demo-badge badge-teacher" onclick="fillCreds('rajesh.kumar','password123','teacher')">rajesh.kumar / password123</span></div>
+        <div class="demo-row"><span>Student:</span><span class="demo-badge badge-student" onclick="fillCreds('21BCA001','password123','student')">21BCA001 / password123</span></div>
+        <div class="demo-row"><span>Staff:</span><span class="demo-badge badge-staff" onclick="fillCreds('lakshmi.devi','password123','staff')">lakshmi.devi / password123</span></div>
+      </div>
+    </div><!-- /#login-form-section -->
+
+    <!-- FORGOT PASSWORD -->
+    <div class="login-card" id="forgot-section" style="display:none;">
+      <h3 class="forgot-title">🔑 Reset Password</h3>
+
+      <!-- Step 1: Enter email -->
+      <div id="fp-step1">
+        <div class="form-group">
+          <label class="form-label">Registered Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input class="form-input" type="email" id="fp-email" placeholder="Enter your email" autocomplete="email">
+          </div>
+        </div>
+        <button class="btn-login" type="button" onclick="sendOTP()">Send OTP</button>
+        <div class="forgot-link"><a onclick="showLogin()">← Back to Login</a></div>
+      </div>
+
+      <!-- Step 2: Enter OTP -->
+      <div id="fp-step2" style="display:none;">
+        <p class="fp-info">Enter the 6-digit OTP sent to your email</p>
+        <div class="otp-inputs">
+          <input class="otp-input" maxlength="1" id="o1" type="text" inputmode="numeric" oninput="otpNext(this,'o2')">
+          <input class="otp-input" maxlength="1" id="o2" type="text" inputmode="numeric" oninput="otpNext(this,'o3')">
+          <input class="otp-input" maxlength="1" id="o3" type="text" inputmode="numeric" oninput="otpNext(this,'o4')">
+          <input class="otp-input" maxlength="1" id="o4" type="text" inputmode="numeric" oninput="otpNext(this,'o5')">
+          <input class="otp-input" maxlength="1" id="o5" type="text" inputmode="numeric" oninput="otpNext(this,'o6')">
+          <input class="otp-input" maxlength="1" id="o6" type="text" inputmode="numeric" oninput="otpNext(this,null)">
+        </div>
+        <button class="btn-login" type="button" onclick="verifyOTP()">Verify OTP</button>
+        <div class="forgot-link"><a onclick="showLogin()">← Back to Login</a></div>
+      </div>
+
+      <!-- Step 3: Set new password -->
+      <div id="fp-step3" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input class="form-input" id="fp-newpass" type="password" placeholder="Enter new password" autocomplete="new-password">
+          </div>
+        </div>
+        <button class="btn-login" type="button" onclick="resetPassword()">Reset Password</button>
+        <div class="forgot-link"><a onclick="showLogin()">← Back to Login</a></div>
+      </div>
+    </div><!-- /#forgot-section -->
+  </div><!-- /.login-container -->
+</div><!-- /#login-page -->
+
+
+<!-- ===================================================
+     MAIN APP
+=================================================== -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🎓</div>
+      <div class="brand-text">
+        <h2>EduManage</h2>
+        <span>Management System</span>
+      </div>
+    </div>
+    <nav class="nav-section" id="nav-menu"></nav>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebar-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">Admin</div>
+          <div class="user-role" id="sidebar-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="main-content">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" type="button" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+        <div class="page-title" id="page-title">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <!-- Dark mode toggle -->
+        <label class="theme-toggle" title="Toggle Dark Mode">
+          <input type="checkbox" id="theme-check" onchange="toggleTheme()">
+          <span class="theme-slider"></span>
+        </label>
+        <!-- Notifications bell -->
+        <button class="btn-icon" type="button" title="Notifications" onclick="toggleNotifPanel()">
+          🔔<span class="notif-dot" id="notif-dot" style="display:none;"></span>
+        </button>
+        <!-- Logout -->
+        <button class="btn-logout" type="button" onclick="doLogout()">
+          <span>🚪</span><span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT — rendered dynamically by JS -->
+    <div class="page-content" id="page-content"></div>
+  </div><!-- /.main-content -->
+
+  <!-- NOTIFICATIONS PANEL (slide-in from right) -->
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-panel-header">
+      <strong>🔔 Notifications</strong>
+      <button type="button" onclick="toggleNotifPanel()" class="modal-close">✕</button>
+    </div>
+    <div class="notif-panel-body" id="notif-body"></div>
+  </div>
+</div><!-- /#app -->
+
+<!-- Toast container — toasts appended here by JS -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Script loaded last so DOM is ready -->
+<script src="script.js"></script>
+</body>
+</html>
