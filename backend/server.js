@@ -335,15 +335,37 @@ app.post('/api/login', async (req, res) => {
     res.json({
       token,
       user: {
-        _id: user._id,
-        username: user.username,
-        role: user.role,
-        name: user.name,
-        email: user.email,
-        usn: user.usn,
-        course: user.course,
-        semester: user.semester
-      }
+  _id: user._id,
+  username: user.username,
+  role: user.role,
+
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+
+  usn: user.usn,
+  course: user.course,
+  semester: user.semester,
+
+  gender: user.gender,
+  dob: user.dob,
+  admissionDate: user.admissionDate,
+
+  parentName: user.parentName,
+  parentPhone: user.parentPhone,
+
+  address: user.address,
+
+  department: user.department,
+  qualification: user.qualification,
+  experience: user.experience,
+  subjects: user.subjects,
+
+  joiningDate: user.joiningDate,
+  designation: user.designation,
+
+  status: user.status
+}
     });
 
   } catch (error) {
