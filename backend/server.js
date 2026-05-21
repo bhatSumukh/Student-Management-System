@@ -568,7 +568,7 @@ app.get('/api/student/summary', auth, requireRole('student'), async (req, res) =
 // Now correctly filters by role and excludes admin from results.
 // ── GET /api/users?role=student  →  only students
 // ── GET /api/users               →  all non-admin users
-app.get('/api/users', auth, requireRole('admin'), async (req, res) => {
+app.get('/api/users', auth, requireRole('admin', 'teacher'), async (req, res)=> {
 
   try {
 

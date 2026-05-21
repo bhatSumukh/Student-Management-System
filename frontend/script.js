@@ -195,7 +195,10 @@ async function launchApp() {
   loadNotifications();
 
   // Pre-load live users for admin
-  if (state.role === 'admin') await loadAllUsers();
+// Load users for admin and teacher
+if (state.role === 'admin' || state.role === 'teacher') {
+  await loadAllUsers();
+}
 
   navigateTo('dashboard');
   showToast(`Welcome back, ${state.user.name.split(' ')[0]}! 🎉`, 'success');
@@ -473,6 +476,16 @@ function renderPage(page) {
     }
   } else {
     c.innerHTML = `<div class="empty-state"><div class="empty-icon">🚧</div><p>Module under development.</p></div>`;
+  }
+}
+
+async function loadStudentsForTeacher() {
+  try {
+    const users = await api('/users?role=student');
+    return users;
+  } catch (err) {
+    showToast(err.message, 'error');
+    return [];
   }
 }
 
